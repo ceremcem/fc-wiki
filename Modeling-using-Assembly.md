@@ -40,7 +40,7 @@ The cut shape does not need to be constrained, it will follow the original
 panel shape. You can hide the uncut panel and reveal the panel with the hole in
 the final assembly.
 
-# Using `PartSesign` Workbench
+# Using `PartDesign` Workbench
 
 The second approach is to use the `PartDesign` workbench, which seems to be the
 natural choice when the panel itself is created using `PartDesign Body`. The
@@ -59,4 +59,3 @@ parent placement information to calculate the relative location of the binding
 shape, but FreeCAD always recomputes child before the parent.
 
 [[images/partdesign-binder.gif]]
-
