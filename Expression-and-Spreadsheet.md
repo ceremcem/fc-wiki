@@ -1,19 +1,29 @@
 # Overview
 
-Starting from version 0.9, there is a major upgrade of FreeCAD 
+Starting from version 0.9, there is a major upgrade of FreeCAD
 [Expression Engine](http://www.freecadweb.org/wiki/index.php?title=Expressions) and
 [Spreadsheet Workbench](http://www.freecadweb.org/wiki/index.php?title=Spreadsheet_Module).
 This article highlights the difference and enhancement made in my branch
 comparing to the upstream. It assumes that the reader is already familiar
 with the basic usage of expression and spreadsheet. If not, please check out
-the links above first, and also 
+the links above first, and also
 [this](https://yorikvanhavre.gitbooks.io/a-freecad-manual/content/working_with_freecad/using_spreadsheets.html)
 book chapter.
+
+![expression-engine-overall-map](./images/expression-engine-overall-map.png)
+
+>* `#1`: [Python-syntax-mode](https://github.com/realthunder/FreeCAD_assembly3/wiki/Expression-and-Spreadsheet#python-syntax-mode)
+>* `#2`: This is the default mode ("Compatibility mode") while entering an expression, unless
+>    * `Python Mode` is set to `True` for a spreadsheet
+>    * `#@pybegin;` isn't prepended to an expression
+>* `#3`: Currently none.
+>* `#4`: [not-implemented](https://github.com/realthunder/FreeCAD_assembly3/wiki/Expression-and-Spreadsheet#not-implemented), [security-related](https://github.com/realthunder/FreeCAD_assembly3/wiki/Expression-and-Spreadsheet#security-concern)
+
 
 Here is a brief list of the enhancements,
 
 * Expression syntax has been greatly extended to become a full blown scripting
-  language. The syntax is borrowed from Python with a few extension to support 
+  language. The syntax is borrowed from Python with a few extension to support
   FreeCAD unit system, document object reference, etc. It is _mostly_ backward
   compatible with upstream syntax with very few [exceptions](#python-syntax-mode).
 
@@ -98,7 +108,7 @@ there are exceptions. At the time of this writing, the only one I am aware of
 is that `in` as the unit inch is no longer recognized, as it badly conflicts
 with Python keyword `in`. You can still use `"` for the unit inch.
 
-The extended syntax is fully defined in 
+The extended syntax is fully defined in
 [this](/realthunder/FreeCAD/tree/LinkStage3/src/App/ExpressionParser.y) file.
 
 By default, all upstream keywords (except `in`) are recognized, which
@@ -118,14 +128,14 @@ parser as a statement, just like `pass` or `return`, so you must honour the
 usual Python indentation rules. In addition, this statement only takes effect
 in runtime, not parse-time. This means that if you add this statement outside
 of a function definition, the code inside of the function may not be run in
-Python mode depending on its calling context. 
+Python mode depending on its calling context.
 
-Once inside Python mode, 
+Once inside Python mode,
 
 * Units keywords are no longer recognized;
 
-* Expression built-in functions are still recognized, but can be overload by 
-  variables and your own function definition. 
+* Expression built-in functions are still recognized, but can be overload by
+  variables and your own function definition.
 
 * Variable name lookup will include Python builtin module, and take precedence
   over expression built-in functions.
@@ -313,9 +323,9 @@ as follows,
     lookup.
 
   * If there is an object with label of `identifier1` and having a property
-    named `identifier2`, then the expression will be changed to 
+    named `identifier2`, then the expression will be changed to
     `<<identifier1>>.identifier2`
-    
+
   * If there is a local property of name `identifier1` then the expression
     will be changed to `.identifier1.identifier2`
 
@@ -329,8 +339,8 @@ as follows,
   reference inside `subname` by preceding the label with `$`, and the labels
   will also be auto updated if changed by user. In addition, you can also
   include geometry reference inside `subname`, and it will be auto updated
-  if the referenced geometry model is updated, thanks to the new 
-  [[Topological Naming]] feature. 
+  if the referenced geometry model is updated, thanks to the new
+  [[Topological Naming]] feature.
 
   For example, an expression of `Assembly.<<Parts.$Fusion.Edge10>>._shape`
   will give you a Python edge shape object transformed into the global
@@ -429,7 +439,7 @@ eval(cmd, ...)
 more optional input arguments as pre-defined variables before script evaluation.
 The argument supports positional and keyword argument, as well as sequence and
 dictionary unpacking. Positional argument is named as `_index_`, where `index`
-is the argument's position starting with one. For example, 
+is the argument's position starting with one. For example,
 
 ```
 # suppose
@@ -478,7 +488,7 @@ clicking the small blue `f(x)` button shown below.
 
 [[images/property-edit1.png]]
 
-Now, you can reveal all properties by right clicking anywhere in the property 
+Now, you can reveal all properties by right clicking anywhere in the property
 view and select `Show all`. As shown below, you can even use an expression to
 generate a shape and bind it to the `Shape` property, by using the `Expression...`
 menu action. Be careful though, some properties are hidden for a reason.
@@ -636,7 +646,7 @@ def partInfo(obj, key):
 
 <a name="label2"></a>Cell `C2` defines a function to filter for assembly object only. `D2` defines
 a function to extract part information defined in the description field of
-the object (i.e. property `Label2`). In this example, an `idict` is used to 
+the object (i.e. property `Label2`). In this example, an `idict` is used to
 define the part information. `D2` just calls `eval()` to evaluate the script
 inside `Label2`. You can of course use various other ways, such as simple comma
 separated strings, and then use `string.split(',')` to obtain the fields.
@@ -650,11 +660,10 @@ first item of the list is the column heading, the second item stores the
 current column address, and the third item is a lambda to extract the
 corresponding part information.
 
-`B3` is defined as a convenience to consolidate all column definition. It is 
+`B3` is defined as a convenience to consolidate all column definition. It is
 using `Label` edit mode to reduce cell display verbosity.
 
 Once thing to note is that `B1` containing a list of currently opened documents
 for user to select. There is no auto recompute mechanism in case of new or
 deleted document. The user must manually recompute the cell by right click it
 and choose `Recompute`.
-
